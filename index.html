@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pixabay Image Search</title>
+
+  <!-- Material icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+  <!-- basicLightbox (для показа великого зображення) -->
+  <link rel="stylesheet" href="https://unpkg.com/basiclightbox@5.0.4/dist/basicLightbox.min.css" />
+  <script src="https://unpkg.com/basiclightbox@5.0.4/dist/basicLightbox.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Pixabay Image Search</h1>
+
+    <form class="search-form" id="search-form" aria-label="Search images">
+      <input id="query" type="text" name="query" autocomplete="off" placeholder="Search images..." />
+      <button type="submit" class="btn-search">Search</button>
+    </form>
+
+    <div id="notifications" aria-live="polite"></div>
+
+    <ul class="gallery" id="gallery"></ul>
+
+    <div class="controls">
+      <button id="load-more" class="load-more hidden">Load more</button>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
