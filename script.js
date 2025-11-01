@@ -1,30 +1,18 @@
-// ----------------------
-// config
-// ----------------------
-const API_KEY = "52687107-e9492b5d9310c8a2236b74a1d"; // если хочешь использовать другой — замени
+const API_KEY = "52687107-e9492b5d9310c8a2236b74a1d"; 
 const BASE_URL = "https://pixabay.com/api/";
 const PER_PAGE = 12;
 
-// ----------------------
-// elements
-// ----------------------
 const form = document.getElementById("search-form");
 const queryInput = document.getElementById("query");
 const gallery = document.getElementById("gallery");
 const loadMoreBtn = document.getElementById("load-more");
 const notifications = document.getElementById("notifications");
 
-// ----------------------
-// state
-// ----------------------
 let currentPage = 1;
 let currentQuery = "";
 let totalHits = 0;
 let isLoading = false;
 
-// ----------------------
-// helpers
-// ----------------------
 function notify(text, type = "info", ttl = 3000) {
   notifications.innerHTML = `<span class="notification ${type}">${text}</span>`;
   if (ttl) setTimeout(() => { notifications.innerHTML = ""; }, ttl);
@@ -34,14 +22,10 @@ function buildUrl(query, page = 1) {
   return `${BASE_URL}?image_type=photo&orientation=horizontal&q=${encodeURIComponent(query)}&page=${page}&per_page=${PER_PAGE}&key=${API_KEY}`;
 }
 
-// escape HTML for alt text
 function escapeHtml(str = "") {
   return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-// ----------------------
-// network (async with try/catch)
-// ----------------------
 async function fetchImages(query, page = 1) {
   try {
     const url = buildUrl(query, page);
@@ -50,14 +34,10 @@ async function fetchImages(query, page = 1) {
     const data = await res.json();
     return data;
   } catch (err) {
-    // пробросим дальше, обработаем в performSearch
     throw err;
   }
 }
 
-// ----------------------
-// rendering
-// ----------------------
 function renderCards(hits, append = true) {
   const html = hits.map(hit => {
     return `
@@ -93,9 +73,6 @@ function resetSearchState() {
   loadMoreBtn.style.display = "none";
 }
 
-// ----------------------
-// main logic
-// ----------------------
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const q = queryInput.value.trim();
@@ -126,7 +103,6 @@ async function performSearch(append = false) {
     const pageToFetch = append ? currentPage + 1 : 1;
     const data = await fetchImages(currentQuery, pageToFetch);
 
-    // validate response
     if (!data || !Array.isArray(data.hits)) {
       throw new Error("Неправильна відповідь API");
     }
@@ -144,12 +120,10 @@ async function performSearch(append = false) {
       renderCards(data.hits, false);
       currentPage = 1;
     } else {
-      // append
       renderCards(data.hits, true);
       currentPage = pageToFetch;
     }
 
-    // show/hide load more
     const loadedSoFar = (currentPage) * PER_PAGE;
     if (loadedSoFar < totalHits) {
       loadMoreBtn.style.display = "inline-block";
@@ -159,10 +133,8 @@ async function performSearch(append = false) {
     }
 
     if (append) {
-      // плавний скрол після додавання
       setTimeout(scrollToNewlyLoaded, 120);
     } else {
-      // прокрутити до галереї
       gallery.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
@@ -172,14 +144,10 @@ async function performSearch(append = false) {
     loadMoreBtn.disabled = false;
   } finally {
     isLoading = false;
-    // уберем "завантаження" через короткий час, якщо оно все ще там
     setTimeout(() => { if (notifications) notifications.innerHTML = ""; }, 800);
   }
 }
 
-// ----------------------
-// lightbox (кілька рядків) — використовует basicLightbox подключённый в index.html
-// ----------------------
 gallery.addEventListener("click", (e) => {
   const card = e.target.closest(".photo-card");
   if (!card) return;
@@ -189,5 +157,4 @@ gallery.addEventListener("click", (e) => {
   instance.show();
 });
 
-// initial state
 loadMoreBtn.style.display = "none";
